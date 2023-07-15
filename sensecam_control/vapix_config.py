@@ -371,6 +371,36 @@ class CameraConfiguration:
         text = str(resp)
         text += str(resp.text)
         return text
+    def start_recording(self, disk: str, profile: str = None):
+        """
+        Start recording.
+        Code by @quantumbagel
+        :param disk: the ID of the disk to record to.
+        :return the recording id and 0 if succesful, the error and 1 if not.
+        """
+        payload = {"diskid": disk, 'streamprofile': profile}
+        url = 'http://' + self.cam_ip + '/axis-cgi/record/record.cgi'
+        resp = requests.get(url, auth=HTTPDigestAuth(self.cam_user, self.cam_password),
+                            params=payload)
+        response_dict = json.loads(resp.text)
+        result = response_dict['record']['result']
+        if result == 'OK':
+            return response_dict['record']['recordingid'], 0
+        else:
+            return response_dict['record']['errormsg'], 1
+        # Need to get the recording ID
+        
+    def stop_recording(self, recording_id: str):
+        """
+        Stop recording.
+        Code by @quantumbagel
+        :param recording_id: the id of the recording to stop.
+        :return if successful
+        """
+        url = 'http://' + self.cam_ip + '/axis-cgi/record/stop.cgi'
+        resp = requests.get(url, auth=HTTPDigestAuth(self.cam_user, self.cam_password),
+                            params={'recordingid': recording_id})
+        return resp.status_code == 200
 
     def get_type_camera(self):
         """
