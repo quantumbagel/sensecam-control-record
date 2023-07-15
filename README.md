@@ -1,7 +1,8 @@
 # Axis Vapix/Onvif Python
 
 
-@quantumbagel has added start and stop recording functionality
+@quantumbagel has added start and stop recording functionality.
+
 This library is designed to provide control and configuration of Axis cameras using the Onvif and Vapix protocol.
 
 
