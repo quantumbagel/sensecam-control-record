@@ -6,8 +6,8 @@ import datetime
 import requests
 from bs4 import BeautifulSoup
 from requests.auth import HTTPDigestAuth
-
-
+import xmltodict
+import json
 # pylint: disable= #R0904
 # pylint: disable= #R0914
 
@@ -382,12 +382,12 @@ class CameraConfiguration:
         url = 'http://' + self.cam_ip + '/axis-cgi/record/record.cgi'
         resp = requests.get(url, auth=HTTPDigestAuth(self.cam_user, self.cam_password),
                             params=payload)
-        response_dict = json.loads(resp.text)
-        result = response_dict['record']['result']
+        response_dict = xmltodict.parse(resp.text)
+        result = response_dict['root']['record']['@result']
         if result == 'OK':
-            return response_dict['record']['recordingid'], 0
+            return response_dict['root']['record']['@recordingid'], 0
         else:
-            return response_dict['record']['errormsg'], 1
+            return response_dict['root']['record']['@errormsg'], 1
         # Need to get the recording ID
         
     def stop_recording(self, recording_id: str):
