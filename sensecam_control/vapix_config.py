@@ -400,7 +400,13 @@ class CameraConfiguration:
         url = 'http://' + self.cam_ip + '/axis-cgi/record/stop.cgi'
         resp = requests.get(url, auth=HTTPDigestAuth(self.cam_user, self.cam_password),
                             params={'recordingid': recording_id})
-        return resp.status_code == 200
+        response_dict = xmltodict.parse(resp.text)
+        result = response_dict['root']['stop']['@result']
+        if result == 'OK':
+            return True
+        else:
+            return False
+
 
     def get_type_camera(self):
         """
