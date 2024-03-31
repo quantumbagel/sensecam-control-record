@@ -419,6 +419,7 @@ class CameraConfiguration:
         url = 'http://' + self.cam_ip + '/axis-cgi/record/export/exportrecording.cgi'
         resp = requests.get(url, auth=HTTPDigestAuth(self.cam_user, self.cam_password), stream=True,
                             params={
+                                'schemaversion': '1.2',
                                 'recordingid': recording_id,
                                 'diskid': disk,
                                 'exportformat': 'matroska'
