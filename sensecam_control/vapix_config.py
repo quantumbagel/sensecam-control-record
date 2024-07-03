@@ -407,7 +407,31 @@ class CameraConfiguration:
         else:
             return False
 
-
+    def export_recording(self, disk: str, recording_id: str, export_path: str):
+        """
+        Code by @vpatil33
+        Exports the recording to a file
+        :param disk: the id of the disk the recording is in
+        :param recording_id: the id of the recording to export
+        :param export_path: path + file name to export the recording to
+        :return if successful
+        """
+        url = 'http://' + self.cam_ip + '/axis-cgi/record/export/exportrecording.cgi'
+        resp = requests.get(url, auth=HTTPDigestAuth(self.cam_user, self.cam_password), stream=True,
+                            params={
+                                'schemaversion': '1.2',
+                                'recordingid': recording_id,
+                                'diskid': disk,
+                                'exportformat': 'matroska'
+                            })
+        if resp.status_code != 200:
+            return False
+        else:
+            with open (export_path, 'wb') as f:
+                for chunk in resp.iter_content(chunk_size=16*1024):
+                    f.write(chunk)
+            return True
+                    
     def get_type_camera(self):
         """
         Request type camera.
